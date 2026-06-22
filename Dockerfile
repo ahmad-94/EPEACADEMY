@@ -54,7 +54,12 @@ WORKDIR /project/${KOBWEB_APP_ROOT}
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx256m" >> ~/.gradle/gradle.properties
 
-RUN kobweb export --notty
+# Run the export and verify the output
+RUN kobweb export --notty && \
+    echo "=== Verifying export output ===" && \
+    ls -la .kobweb/ && \
+    echo "=== Server directory contents ===" && \
+    ls -la .kobweb/server/ || echo "Warning: server directory not found"
 
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
@@ -63,6 +68,13 @@ FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
+# Copy the exported site
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
 
-ENTRYPOINT .kobweb/server/start.sh
+# Debug: Verify the contents in the final stage
+RUN echo "=== Final stage verification ===" && \
+    ls -la .kobweb/ && \
+    ls -la .kobweb/server/ || echo "Warning: server directory not found"
+
+# Use a robust entrypoint that tries multiple methods to start the server
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f '.kobweb/server/start.sh' ]; then .kobweb/server/start.sh; elif [ -f '.kobweb/server/server.jar' ]; then java -jar .kobweb/server/server.jar; else echo 'Error: No server start script or JAR found'; ls -la .kobweb/; ls -la .kobweb/server/ || echo 'server directory missing'; exit 1; fi"]
