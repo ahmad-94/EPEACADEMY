@@ -23,9 +23,6 @@ ENV NODE_MAJOR=20
 COPY . /project
 
 # Update and install required OS packages to continue
-# Note: Node install instructions from: https://github.com/nodesource/distributions#installation-instructions
-# Note: Playwright is a system for running browsers, and here we use it to
-# install Chromium.
 RUN apt-get update \
     && apt-get install -y ca-certificates curl gnupg unzip wget \
     && mkdir -p /etc/apt/keyrings \
@@ -48,18 +45,17 @@ ENV PATH="/kobweb-${KOBWEB_CLI_VERSION}/bin:${PATH}"
 
 WORKDIR /project/${KOBWEB_APP_ROOT}
 
-# Decrease Gradle memory usage to avoid OOM situations in tight environments
-# (many free Cloud tiers only give you 512M of RAM). The following amount
-# should be more than enough to build and export our site.
+# Decrease Gradle memory usage
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx256m" >> ~/.gradle/gradle.properties
 
-# Run the export and verify the output
+# Run the export - this creates the .kobweb folder with server.jar
 RUN kobweb export --notty && \
     echo "=== Verifying export output ===" && \
     ls -la .kobweb/ && \
-    echo "=== Server directory contents ===" && \
-    ls -la .kobweb/server/ || echo "Warning: server directory not found"
+    ls -la .kobweb/server/ && \
+    echo "=== Site content (should contain exported HTML/CSS/JS) ===" && \
+    ls -la .kobweb/site/ || echo "Warning: site directory not found"
 
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
@@ -68,13 +64,20 @@ FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the exported site
+# Copy the ENTIRE .kobweb directory from the export stage
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
 
 # Debug: Verify the contents in the final stage
 RUN echo "=== Final stage verification ===" && \
     ls -la .kobweb/ && \
-    ls -la .kobweb/server/ || echo "Warning: server directory not found"
+    ls -la .kobweb/server/ && \
+    ls -la .kobweb/site/ || echo "Warning: site directory not found in final stage"
 
-# Use a robust entrypoint that tries multiple methods to start the server
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f '.kobweb/server/start.sh' ]; then .kobweb/server/start.sh; elif [ -f '.kobweb/server/server.jar' ]; then java -jar .kobweb/server/server.jar; else echo 'Error: No server start script or JAR found'; ls -la .kobweb/; ls -la .kobweb/server/ || echo 'server directory missing'; exit 1; fi"]
+# Set working directory to where the .kobweb folder is
+WORKDIR /app
+
+# Copy the .kobweb folder to the working directory
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
+
+# Run the server JAR directly with the correct classpath
+ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
