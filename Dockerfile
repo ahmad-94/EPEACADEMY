@@ -33,6 +33,9 @@ RUN apt-get update \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y nodejs \
+    && apt-get install -y npm \
+    && npm install -g npm@latest \
+    && node --version && npm --version \
     && npm init -y \
     && npx playwright install --with-deps chromium
 
