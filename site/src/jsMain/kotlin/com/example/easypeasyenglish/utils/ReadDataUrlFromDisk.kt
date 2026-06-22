@@ -1,0 +1,24 @@
+package com.example.easypeasyenglish.utils
+
+import kotlinx.browser.document
+import org.w3c.dom.HTMLInputElement
+import org.w3c.files.FileReader
+
+fun loadDataUrlFromDisk(onLoaded: (dataUrl: String, fileName: String) -> Unit) {
+    val input = document.createElement("input") as HTMLInputElement
+    input.type = "file"
+    input.accept = "image/*"
+
+    input.onchange = {
+        val file = input.files?.item(0)
+        if (file != null) {
+            val reader = FileReader()
+            reader.onload = {
+                onLoaded(reader.result as String, file.name)
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
+    input.click()
+}
