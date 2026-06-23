@@ -22,5 +22,5 @@ ENV MONGODB_URI=""
 # Expose the port
 EXPOSE 8080
 
-# Run the JAR directly with the correct path
-ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
+# 👇 Use shell form to properly pass environment variables
+ENTRYPOINT ["/bin/sh", "-c", "java -jar .kobweb/server/server.jar"]
