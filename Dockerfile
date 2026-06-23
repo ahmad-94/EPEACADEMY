@@ -29,29 +29,38 @@ RUN mkdir ~/.gradle && \
 
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Install Python for HTTP server
 RUN apt-get update && apt-get install -y python3 -y
 
-# Copy the built static files
+# Copy the production executable
 COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
 
 WORKDIR /app
 
+# Flatten the directory structure - move all files to root
+RUN echo "=== Before flattening ===" && \
+    ls -la /app/site/ && \
+    echo "=== Flattening directories ===" && \
+    if [ -d /app/site/kobweb ]; then \
+        echo "Moving kobweb contents to root"; \
+        cp -r /app/site/kobweb/* /app/site/ && \
+        rm -rf /app/site/kobweb; \
+    fi && \
+    if [ -d /app/site/public ]; then \
+        echo "Moving public contents to root"; \
+        cp -r /app/site/public/* /app/site/ && \
+        rm -rf /app/site/public; \
+    fi && \
+    echo "=== After flattening ===" && \
+    ls -la /app/site/
+
 ENV MONGODB_URI=""
 
-# Debug: Check what was copied
-RUN echo "=== Files in /app/site ===" && \
-    ls -la /app/site/ && \
-    echo "=== Looking for HTML files ===" && \
-    find /app/site -name "*.html" 2>/dev/null || echo "No HTML files found"
-
-# Serve the static files
+# Serve from the flattened directory
 EXPOSE 8080
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; elif [ -f /app/site/kobweb/index.html ]; then python3 -m http.server 8080 --directory /app/site/kobweb; elif [ -f /app/site/public/index.html ]; then python3 -m http.server 8080 --directory /app/site/public; else echo 'No HTML found!'; find /app/site -name '*.html'; exit 1; fi"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; else echo 'No index.html found!'; find /app/site -name '*.html'; exit 1; fi"]
