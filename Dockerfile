@@ -34,12 +34,7 @@ RUN ./gradlew :site:build --no-daemon --stacktrace
 
 # Find the HTML file
 RUN echo "=== Searching for HTML files ===" && \
-    find /project/${KOBWEB_APP_ROOT}/build -name "*.html" 2>/dev/null && \
-    echo "=== Searching for index files ===" && \
-    find /project/${KOBWEB_APP_ROOT}/build -name "index.*" 2>/dev/null
-
-# Also try the kobwebExport
-RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export failed, but build succeeded"
+    find /project/${KOBWEB_APP_ROOT}/build -name "*.html" 2>/dev/null
 
 FROM java as run
 
@@ -51,21 +46,18 @@ COPY --from=export /project/${KOBWEB_APP_ROOT}/build /app/build
 # Also copy the production executable directly
 COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
 
-# Copy .kobweb if it exists
-RUN if [ -d "/project/${KOBWEB_APP_ROOT}/.kobweb" ]; then \
-        mkdir -p /app && \
-        cp -r /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb; \
-    fi
-
-# Debug: List all HTML files
+# Debug: Find the HTML file
 RUN echo "=== Finding HTML files in /app ===" && \
     find /app -name "*.html" 2>/dev/null && \
-    echo "=== Listing /app/site/kobweb ===" && \
+    echo "=== Checking kobweb directory ===" && \
     ls -la /app/site/kobweb/ 2>/dev/null || echo "kobweb directory not found" && \
-    echo "=== Listing /app/site/public ===" && \
+    echo "=== Checking public directory ===" && \
     ls -la /app/site/public/ 2>/dev/null || echo "public directory not found"
 
-WORKDIR /app/site
+WORKDIR /app
 
-# Try multiple possible entry points
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; elif [ -f /app/site/kobweb/index.html ]; then python3 -m http.server 8080 --directory /app/site/kobweb; elif [ -f /app/site/public/index.html ]; then python3 -m http.server 8080 --directory /app/site/public; elif [ -f /app/.kobweb/server/start.sh ]; then /app/.kobweb/server/start.sh; else echo 'No files found!'; find /app -name '*.html' 2>/dev/null || echo 'No HTML files found at all'; exit 1; fi"]
+# Install Python for HTTP server
+RUN apt-get update && apt-get install -y python3
+
+# Serve from the directory that actually contains the HTML
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/kobweb/index.html ]; then echo 'Serving from /app/site/kobweb'; python3 -m http.server 8080 --directory /app/site/kobweb; elif [ -f /app/site/public/index.html ]; then echo 'Serving from /app/site/public'; python3 -m http.server 8080 --directory /app/site/public; elif [ -f /app/site/index.html ]; then echo 'Serving from /app/site'; python3 -m http.server 8080 --directory /app/site; else echo 'No HTML found!'; find /app -name '*.html' 2>/dev/null || echo 'No HTML files found at all'; exit 1; fi"]
