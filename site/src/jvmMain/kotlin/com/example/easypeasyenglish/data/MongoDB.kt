@@ -37,7 +37,6 @@ fun initMongoDB(context: InitApiContext) {
     context.data.add<MongoRepository>(mongoDB)
 }
 
-private val CONNECTION_STRING = System.getenv("MONGODB_URI")
 
 
 
@@ -46,9 +45,7 @@ class MongoDB(
 
 ): MongoRepository {
 
-    private val client = KMongo.createClient(
-        CONNECTION_STRING
-    )
+    private val client = KMongo.createClient(System.getenv("MONGODB_URI"))
 
     private val database = client.getDatabase(DATABASE_NAME)
     private val userCollection = database.getCollection<User>()
