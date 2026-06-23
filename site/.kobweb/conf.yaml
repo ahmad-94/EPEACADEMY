@@ -11,4 +11,10 @@ server:
       script: "build/kotlin-webpack/js/productionExecutable/easypeayenglish.js"
       siteRoot: ".kobweb/site"
 
+  cors:
+    hosts:
+      - name: "epeacademy.onrender.com/"
+        schemes:
+         - "https"
+
   port: 8080
