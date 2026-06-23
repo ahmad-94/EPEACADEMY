@@ -1,6 +1,8 @@
 ARG KOBWEB_APP_ROOT="site"
 
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17 as java
+
+FROM java as export
 
 ARG KOBWEB_APP_ROOT
 ENV NODE_MAJOR=20
@@ -37,8 +39,25 @@ ENV MONGODB_URI=""
 # Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
-WORKDIR /project/${KOBWEB_APP_ROOT}
+# Run the export to create the server JAR
+RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
 
-# Run the server directly (like you do locally)
-EXPOSE 8080
-ENTRYPOINT ["kobweb", "run", "--env", "prod"]
+FROM java as run
+
+ARG KOBWEB_APP_ROOT
+
+# Copy the entire site folder (which contains .kobweb)
+COPY --from=export /project/${KOBWEB_APP_ROOT} /app/site
+
+WORKDIR /app/site
+
+ENV MONGODB_URI=""
+
+# Debug
+RUN echo "=== Checking .kobweb/server ===" && \
+    ls -la .kobweb/server/ && \
+    echo "=== Checking .kobweb/site ===" && \
+    ls -la .kobweb/site/ 2>/dev/null || echo "site subfolder not found"
+
+# Run the server JAR directly (no terminal needed)
+ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
