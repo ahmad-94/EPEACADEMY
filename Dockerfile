@@ -30,37 +30,46 @@ RUN chmod +x gradlew
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-# Diagnostic step
+# Diagnostic: Show project structure
 RUN echo "=== Project structure ===" && \
     ls -la /project/ && \
     echo "=== Site module structure ===" && \
     ls -la /project/site/ || echo "Site directory not found"
 
-# Build the site - this MUST succeed
-RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace && \
-    echo "=== Verifying export output ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/server/ && \
-    echo "=== Site content (should contain exported HTML/CSS/JS) ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/site/ || \
-    (echo "ERROR: Site directory not found!" && exit 1)
+# Run the export and capture the full output
+RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace --info 2>&1 | tee /build.log || true
+
+# Show the last 200 lines of the build log (where the error usually is)
+RUN echo "=== Last 200 lines of build log ===" && \
+    tail -n 200 /build.log
+
+# Check if .kobweb was created at all
+RUN echo "=== Checking .kobweb directory ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ || echo ".kobweb not found"
+
+# If .kobweb exists, check its contents
+RUN if [ -d "/project/${KOBWEB_APP_ROOT}/.kobweb" ]; then \
+        echo "=== .kobweb/server contents ===" && \
+        ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/server/ || echo "server not found"; \
+        echo "=== .kobweb/site contents (if exists) ===" && \
+        ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/site/ || echo "site not found"; \
+    fi
 
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the .kobweb directory
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
-
-RUN echo "=== Final stage verification ===" && \
-    ls -la .kobweb/ && \
-    ls -la .kobweb/server/ && \
-    ls -la .kobweb/site/ || echo "Warning: site directory not found in final stage"
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb || echo "No .kobweb to copy"
 
 WORKDIR /app
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb || echo "No .kobweb to copy"
 
-# Verify the JAR file exists before running
-RUN test -f .kobweb/server/server.jar && echo "server.jar found!" || (echo "server.jar NOT found!" && exit 1)
+RUN if [ -f .kobweb/server/server.jar ]; then \
+        echo "server.jar found!"; \
+    else \
+        echo "server.jar NOT found!"; \
+        ls -la .kobweb/server/ || echo "server directory missing"; \
+        exit 1; \
+    fi
 
 ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
