@@ -20,6 +20,13 @@ RUN apt-get update \
     && npm install -g npm@latest \
     && node --version && npm --version
 
+# Install Kobweb CLI
+ENV KOBWEB_CLI_VERSION=0.9.21
+RUN wget https://github.com/varabyte/kobweb-cli/releases/download/v${KOBWEB_CLI_VERSION}/kobweb-${KOBWEB_CLI_VERSION}.zip \
+    && unzip kobweb-${KOBWEB_CLI_VERSION}.zip \
+    && rm kobweb-${KOBWEB_CLI_VERSION}.zip
+ENV PATH="/kobweb-${KOBWEB_CLI_VERSION}/bin:${PATH}"
+
 WORKDIR /project
 
 RUN chmod +x gradlew
@@ -29,38 +36,37 @@ RUN mkdir ~/.gradle && \
 
 ENV MONGODB_URI="mongodb://localhost:27017"
 
+# Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
+
+# Try to export (this creates the .kobweb folder with server.jar)
+RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
+
+# Check what we have
+RUN echo "=== Checking .kobweb ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ 2>/dev/null || echo ".kobweb not found" && \
+    echo "=== Checking .kobweb/server ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/server/ 2>/dev/null || echo "server not found"
 
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-RUN apt-get update && apt-get install -y python3 -y
+# Copy the .kobweb directory (contains server.jar)
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
 
-# Copy the production executable
+# Also copy static files as fallback
 COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
 
 WORKDIR /app
 
-# Flatten the directory structure - move all files to root
-RUN echo "=== Before flattening ===" && \
-    ls -la /app/site/ && \
-    echo "=== Flattening directories ===" && \
-    if [ -d /app/site/kobweb ]; then \
-        echo "Moving kobweb contents to root"; \
-        cp -r /app/site/kobweb/* /app/site/ && \
-        rm -rf /app/site/kobweb; \
-    fi && \
-    if [ -d /app/site/public ]; then \
-        echo "Moving public contents to root"; \
-        cp -r /app/site/public/* /app/site/ && \
-        rm -rf /app/site/public; \
-    fi && \
-    echo "=== After flattening ===" && \
-    ls -la /app/site/
-
 ENV MONGODB_URI=""
 
-# Serve from the flattened directory
-EXPOSE 8080
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; else echo 'No index.html found!'; find /app/site -name '*.html'; exit 1; fi"]
+# Debug
+RUN echo "=== Final stage .kobweb ===" && \
+    ls -la /app/.kobweb/ 2>/dev/null || echo ".kobweb not found" && \
+    echo "=== Final stage .kobweb/server ===" && \
+    ls -la /app/.kobweb/server/ 2>/dev/null || echo "server not found"
+
+# Run the Kobweb server JAR directly
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/.kobweb/server/server.jar ]; then echo 'Starting Kobweb server...'; java -jar /app/.kobweb/server/server.jar; else echo 'server.jar not found!'; exit 1; fi"]
