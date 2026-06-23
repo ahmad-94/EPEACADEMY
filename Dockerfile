@@ -34,30 +34,49 @@ RUN chmod +x gradlew
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-ENV MONGODB_URI=""
+# Set dummy MongoDB URI for build (will be replaced at runtime)
+ENV MONGODB_URI="mongodb://localhost:27017"
 
 # Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
-# Run the export to create the server JAR
+# Try to export - this creates the server JAR
 RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
+
+# Debug: Check what was generated
+RUN echo "=== Checking .kobweb ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ && \
+    echo "=== Checking .kobweb/server ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/server/ && \
+    echo "=== Checking .kobweb/site ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/site/ 2>/dev/null || echo "site folder is empty!"
+
+# Copy static files to .kobweb/site if it's empty
+RUN if [ ! "$(ls -A /project/${KOBWEB_APP_ROOT}/.kobweb/site 2>/dev/null)" ]; then \
+        echo "Site folder is empty, copying static files..."; \
+        mkdir -p /project/${KOBWEB_APP_ROOT}/.kobweb/site; \
+        cp -r /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/* /project/${KOBWEB_APP_ROOT}/.kobweb/site/; \
+        echo "Static files copied to .kobweb/site"; \
+    fi
 
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the entire site folder (which contains .kobweb)
-COPY --from=export /project/${KOBWEB_APP_ROOT} /app/site
+# Copy the entire .kobweb directory
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
 
-WORKDIR /app/site
+WORKDIR /app
 
 ENV MONGODB_URI=""
 
-# Debug
-RUN echo "=== Checking .kobweb/server ===" && \
-    ls -la .kobweb/server/ && \
-    echo "=== Checking .kobweb/site ===" && \
-    ls -la .kobweb/site/ 2>/dev/null || echo "site subfolder not found"
+# Debug: Check what we have
+RUN echo "=== Final stage .kobweb ===" && \
+    ls -la /app/.kobweb/ && \
+    echo "=== Final stage .kobweb/server ===" && \
+    ls -la /app/.kobweb/server/ && \
+    echo "=== Final stage .kobweb/site ===" && \
+    ls -la /app/.kobweb/site/ 2>/dev/null || echo "site folder not found"
 
-# Run the server JAR directly (no terminal needed)
+# Run the server JAR
 ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
