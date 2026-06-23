@@ -46,7 +46,11 @@ RUN wget https://github.com/varabyte/kobweb-cli/releases/download/v${KOBWEB_CLI_
 
 ENV PATH="/kobweb-${KOBWEB_CLI_VERSION}/bin:${PATH}"
 
-WORKDIR /project/${KOBWEB_APP_ROOT}
+# 👇 MOVE TO /project FIRST (where gradlew is located)
+WORKDIR /project
+
+# Make gradlew executable
+RUN chmod +x gradlew
 
 # Decrease Gradle memory usage to avoid OOM situations in tight environments
 # (many free Cloud tiers only give you 512M of RAM). The following amount
@@ -61,17 +65,17 @@ ENV MONGODB_URI="mongodb://localhost:27017"
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
 # SECOND: Run the export to create the server JAR
-RUN kobweb export --notty
+RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace
 
 # Verify the export succeeded
-RUN test -d .kobweb && \
-    test -f .kobweb/server/server.jar && \
+RUN test -d /project/${KOBWEB_APP_ROOT}/.kobweb && \
+    test -f /project/${KOBWEB_APP_ROOT}/.kobweb/server/server.jar && \
     echo "Export successful!" || \
     (echo "Export failed!" && exit 1)
 
 # Check if the site folder has content
 RUN echo "=== Checking .kobweb/site contents ===" && \
-    ls -la .kobweb/site/ 2>/dev/null || echo "site folder is empty or missing!"
+    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/site/ 2>/dev/null || echo "site folder is empty or missing!"
 
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
