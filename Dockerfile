@@ -1,5 +1,3 @@
-#-----------------------------------------------------------------------------
-# Variables shared across multiple stages
 ARG KOBWEB_APP_ROOT="site"
 
 FROM eclipse-temurin:17 as java
@@ -9,10 +7,8 @@ FROM java as export
 ARG KOBWEB_APP_ROOT
 ENV NODE_MAJOR=20
 
-# Copy the project code
 COPY . /project
 
-# Update and install required OS packages
 RUN apt-get update \
     && apt-get install -y ca-certificates curl gnupg unzip wget \
     && mkdir -p /etc/apt/keyrings \
@@ -22,38 +18,28 @@ RUN apt-get update \
     && apt-get install -y nodejs \
     && apt-get install -y npm \
     && npm install -g npm@latest \
-    && node --version && npm --version \
-    && npm init -y \
-    && npx playwright install --with-deps chromium
+    && node --version && npm --version
 
 WORKDIR /project/${KOBWEB_APP_ROOT}
 
-# Decrease Gradle memory usage
 RUN mkdir ~/.gradle && \
-    echo "org.gradle.jvmargs=-Xmx256m" >> ~/.gradle/gradle.properties
+    echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-# Use Gradle directly (uses the plugin version from your project)
-RUN chmod +x /project/gradlew && \
-    /project/gradlew :site:kobwebExport --no-daemon && \
-    echo "=== Verifying export output ===" && \
-    ls -la .kobweb/ && \
-    ls -la .kobweb/server/ && \
-    echo "=== Site content (should contain exported HTML/CSS/JS) ===" && \
-    ls -la .kobweb/site/ || echo "Warning: site directory not found"
+# Diagnostic step
+RUN echo "=== Project structure ===" && \
+    ls -la /project/ && \
+    echo "=== Site module structure ===" && \
+    ls -la /project/site/ || echo "Site directory not found"
 
-#-----------------------------------------------------------------------------
-# Create the final stage
+# Try to build with verbose logging
+RUN /project/gradlew :site:kobwebExport --no-daemon --stacktrace --info || \
+    echo "=== Export failed, checking for errors ==="
+
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the .kobweb directory
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
-
-RUN echo "=== Final stage verification ===" && \
-    ls -la .kobweb/ && \
-    ls -la .kobweb/server/ && \
-    ls -la .kobweb/site/ || echo "Warning: site directory not found in final stage"
 
 WORKDIR /app
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
