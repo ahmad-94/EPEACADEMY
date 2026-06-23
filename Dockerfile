@@ -29,10 +29,8 @@ RUN mkdir ~/.gradle && \
 
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Build the site
+# Build the site and generate the server JAR
 RUN ./gradlew :site:build --no-daemon --stacktrace
-
-# Also run kobwebExport to generate the server JAR
 RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
 
 # Verify the server JAR exists
@@ -44,15 +42,12 @@ FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the .kobweb directory with the server JAR
+# Only copy the .kobweb directory - this is all we need
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
-
-# Also copy the static files (in case they're needed)
-COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site 2>/dev/null || true
 
 WORKDIR /app
 
-# Debug: Verify the server JAR exists
+# Verify the server JAR exists
 RUN test -f /app/.kobweb/server/server.jar && \
     echo "server.jar found in final stage!" || \
     (echo "server.jar NOT found in final stage!" && exit 1)
