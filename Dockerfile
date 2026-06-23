@@ -1,5 +1,3 @@
-#-----------------------------------------------------------------------------
-# Variables shared across multiple stages
 ARG KOBWEB_APP_ROOT="site"
 
 FROM eclipse-temurin:17 as java
@@ -11,7 +9,6 @@ ENV NODE_MAJOR=20
 
 COPY . /project
 
-# Install Node.js and npm
 RUN apt-get update \
     && apt-get install -y ca-certificates curl gnupg unzip wget \
     && mkdir -p /etc/apt/keyrings \
@@ -25,55 +22,50 @@ RUN apt-get update \
 
 WORKDIR /project
 
-# Make gradlew executable
 RUN chmod +x gradlew
 
-# Create gradle properties
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-# Set MongoDB URI (needed for the build)
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Use the build task - this generates the static files
+# Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
-# Verify the build output
-RUN echo "=== Checking build output ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/build/ && \
-    echo "=== Checking production executable ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/ && \
-    echo "=== Checking for index.html ===" && \
-    test -f /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/index.html && \
-    echo "index.html found!" || echo "index.html NOT found!"
+# Find the HTML file
+RUN echo "=== Searching for HTML files ===" && \
+    find /project/${KOBWEB_APP_ROOT}/build -name "*.html" 2>/dev/null && \
+    echo "=== Searching for index files ===" && \
+    find /project/${KOBWEB_APP_ROOT}/build -name "index.*" 2>/dev/null
 
-# Also try the kobwebExport (which creates the server)
+# Also try the kobwebExport
 RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export failed, but build succeeded"
 
-#-----------------------------------------------------------------------------
-# Create the final stage
 FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-# Copy the built static files from the build directory
+# Copy the entire build output
+COPY --from=export /project/${KOBWEB_APP_ROOT}/build /app/build
+
+# Also copy the production executable directly
 COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
 
-# Copy .kobweb if it exists - using a RUN command to handle the check
+# Copy .kobweb if it exists
 RUN if [ -d "/project/${KOBWEB_APP_ROOT}/.kobweb" ]; then \
         mkdir -p /app && \
         cp -r /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb; \
     fi
 
-# Debug: Check what was copied
-RUN echo "=== Checking /app/site contents ===" && \
-    ls -la /app/site/ && \
-    echo "=== Checking for index.html ===" && \
-    test -f /app/site/index.html && echo "index.html found!" || echo "index.html NOT found!" && \
-    echo "=== Checking for .kobweb ===" && \
-    ls -la /app/.kobweb/ 2>/dev/null || echo ".kobweb not found"
+# Debug: List all HTML files
+RUN echo "=== Finding HTML files in /app ===" && \
+    find /app -name "*.html" 2>/dev/null && \
+    echo "=== Listing /app/site/kobweb ===" && \
+    ls -la /app/site/kobweb/ 2>/dev/null || echo "kobweb directory not found" && \
+    echo "=== Listing /app/site/public ===" && \
+    ls -la /app/site/public/ 2>/dev/null || echo "public directory not found"
 
-WORKDIR /app
+WORKDIR /app/site
 
-# Run the server using the start script or serve static files
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; elif [ -f /app/site/index.html ]; then python3 -m http.server 8080; else echo 'No files found!'; exit 1; fi"]
+# Try multiple possible entry points
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; elif [ -f /app/site/kobweb/index.html ]; then python3 -m http.server 8080 --directory /app/site/kobweb; elif [ -f /app/site/public/index.html ]; then python3 -m http.server 8080 --directory /app/site/public; elif [ -f /app/.kobweb/server/start.sh ]; then /app/.kobweb/server/start.sh; else echo 'No files found!'; find /app -name '*.html' 2>/dev/null || echo 'No HTML files found at all'; exit 1; fi"]
