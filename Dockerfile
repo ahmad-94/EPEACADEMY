@@ -1,8 +1,6 @@
 ARG KOBWEB_APP_ROOT="site"
 
-FROM eclipse-temurin:17 as java
-
-FROM java as export
+FROM eclipse-temurin:17
 
 ARG KOBWEB_APP_ROOT
 ENV NODE_MAJOR=20
@@ -34,39 +32,13 @@ RUN chmod +x gradlew
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-ENV MONGODB_URI="mongodb://localhost:27017"
+ENV MONGODB_URI=""
 
 # Build the site
 RUN ./gradlew :site:build --no-daemon --stacktrace
 
-# Try to export (this creates the .kobweb folder inside site/)
-RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
+WORKDIR /project/${KOBWEB_APP_ROOT}
 
-# Debug: Check where .kobweb is
-RUN echo "=== Checking for .kobweb ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ 2>/dev/null && echo "Found in site/" || echo "Not found in site/" && \
-    echo "=== Checking root ===" && \
-    ls -la /project/.kobweb/ 2>/dev/null || echo "Not in root"
-
-FROM java as run
-
-ARG KOBWEB_APP_ROOT
-
-# Copy the .kobweb directory from the site folder
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
-
-# Also copy static files as fallback
-COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
-
-WORKDIR /app
-
-ENV MONGODB_URI=""
-
-# Debug
-RUN echo "=== Final stage .kobweb ===" && \
-    ls -la /app/.kobweb/ 2>/dev/null || echo ".kobweb not found" && \
-    echo "=== Final stage .kobweb/server ===" && \
-    ls -la /app/.kobweb/server/ 2>/dev/null || echo "server not found"
-
-# Run the Kobweb server JAR
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/.kobweb/server/server.jar ]; then echo 'Starting Kobweb server...'; java -jar /app/.kobweb/server/server.jar; else echo 'server.jar not found!'; exit 1; fi"]
+# Run the server directly (like you do locally)
+EXPOSE 8080
+ENTRYPOINT ["kobweb", "run", "--env", "prod"]
