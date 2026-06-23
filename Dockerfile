@@ -13,7 +13,6 @@ FROM java as export
 # final stage, we'll only extract what we need from this stage, saving a lot
 # of space.
 
-# 👇 UPDATED to match your project version (0.23.3)
 ENV KOBWEB_CLI_VERSION=0.9.21
 ARG KOBWEB_APP_ROOT
 
@@ -58,7 +57,10 @@ RUN mkdir ~/.gradle && \
 # Set MongoDB URI for the build
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Run the export
+# FIRST: Build the site to generate static files
+RUN ./gradlew :site:build --no-daemon --stacktrace
+
+# SECOND: Run the export to create the server JAR
 RUN kobweb export --notty
 
 # Verify the export succeeded
@@ -66,6 +68,10 @@ RUN test -d .kobweb && \
     test -f .kobweb/server/server.jar && \
     echo "Export successful!" || \
     (echo "Export failed!" && exit 1)
+
+# Check if the site folder has content
+RUN echo "=== Checking .kobweb/site contents ===" && \
+    ls -la .kobweb/site/ 2>/dev/null || echo "site folder is empty or missing!"
 
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
@@ -77,9 +83,19 @@ ARG KOBWEB_APP_ROOT
 # Copy the .kobweb directory from the export stage
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
 
+# Also copy the static files as a fallback
+COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site 2>/dev/null || true
+
 # Verify the server files exist
-RUN ls -la .kobweb/ && \
-    ls -la .kobweb/server/
+RUN echo "=== Final stage .kobweb contents ===" && \
+    ls -la .kobweb/ && \
+    echo "=== Final stage .kobweb/server contents ===" && \
+    ls -la .kobweb/server/ && \
+    echo "=== Final stage site contents ===" && \
+    ls -la /app/site/ 2>/dev/null || echo "No static files copied"
+
+# Set MongoDB URI for runtime (will be overridden by Render env var)
+ENV MONGODB_URI=""
 
 # Run the server
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; else java -jar .kobweb/server/server.jar; fi"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; elif [ -f /app/site/index.html ]; then python3 -m http.server 8080 --directory /app/site; else java -jar .kobweb/server/server.jar; fi"]
