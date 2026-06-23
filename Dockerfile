@@ -14,7 +14,7 @@ FROM java as export
 # of space.
 
 # 👇 UPDATED to match your project version (0.23.3)
-ENV KOBWEB_CLI_VERSION=0.23.3
+ENV KOBWEB_CLI_VERSION=0.9.21
 ARG KOBWEB_APP_ROOT
 
 ENV NODE_MAJOR=20
