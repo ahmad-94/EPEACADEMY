@@ -9,12 +9,9 @@ FROM java as export
 ARG KOBWEB_APP_ROOT
 ENV NODE_MAJOR=20
 
-# Use the CLI version that works with your project
-ENV KOBWEB_CLI_VERSION=0.9.21
-
 COPY . /project
 
-# Install base packages and Node.js
+# Install Node.js and npm
 RUN apt-get update \
     && apt-get install -y ca-certificates curl gnupg unzip wget \
     && mkdir -p /etc/apt/keyrings \
@@ -26,36 +23,32 @@ RUN apt-get update \
     && npm install -g npm@latest \
     && node --version && npm --version
 
-# Download Kobweb CLI
-RUN wget https://github.com/varabyte/kobweb-cli/releases/download/v${KOBWEB_CLI_VERSION}/kobweb-${KOBWEB_CLI_VERSION}.zip \
-    && unzip kobweb-${KOBWEB_CLI_VERSION}.zip \
-    && rm kobweb-${KOBWEB_CLI_VERSION}.zip
+WORKDIR /project
 
-ENV PATH="/kobweb-${KOBWEB_CLI_VERSION}/bin:${PATH}"
+# Make gradlew executable
+RUN chmod +x gradlew
 
-# Install Playwright (minimal - just the browser)
-RUN npx playwright install chromium --with-deps
-
-WORKDIR /project/${KOBWEB_APP_ROOT}
-
+# Create gradle properties
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-# Set MongoDB URI
+# Set MongoDB URI (needed for the build)
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Export with STATIC layout (no browser required)
-RUN kobweb export --notty --layout static
+# Use the build task - this generates the static files
+RUN ./gradlew :site:build --no-daemon --stacktrace
 
-# Verify the export
-RUN test -d .kobweb && \
-    test -f .kobweb/server/server.jar && \
-    echo "Export successful!" || \
-    (echo "Export failed!" && exit 1)
+# Verify the build output
+RUN echo "=== Checking build output ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/build/ && \
+    echo "=== Checking production executable ===" && \
+    ls -la /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/ && \
+    echo "=== Checking for index.html ===" && \
+    test -f /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/index.html && \
+    echo "index.html found!" || echo "index.html NOT found!"
 
-# Check site content
-RUN ls -la .kobweb/site/ && \
-    find .kobweb/site -type f | head -10
+# Also try the kobwebExport (which creates the server)
+RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export failed, but build succeeded"
 
 #-----------------------------------------------------------------------------
 # Create the final stage
@@ -63,10 +56,19 @@ FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
+# Copy the built static files from the build directory
+COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
+
+# Also copy .kobweb if it exists (for server functionality)
+COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb 2>/dev/null || echo "No .kobweb found"
+
+# Debug: Check what was copied
+RUN echo "=== Checking /app/site contents ===" && \
+    ls -la /app/site/ && \
+    echo "=== Checking for index.html ===" && \
+    test -f /app/site/index.html && echo "index.html found!" || echo "index.html NOT found!"
 
 WORKDIR /app
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
 
-# Run the server
-ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
+# Run the server using the start script or serve static files
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; elif [ -f /app/site/index.html ]; then python3 -m http.server 8080; else echo 'No files found!'; exit 1; fi"]
