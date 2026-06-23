@@ -1,14 +1,17 @@
+#-----------------------------------------------------------------------------
+# Variables shared across multiple stages
 ARG KOBWEB_APP_ROOT="site"
 
-FROM eclipse-temurin:17 as java
-
-FROM java as export
+# Stage 1: Build the site
+FROM eclipse-temurin:17 as builder
 
 ARG KOBWEB_APP_ROOT
 ENV NODE_MAJOR=20
 
+# Copy project
 COPY . /project
 
+# Install Node.js and npm
 RUN apt-get update \
     && apt-get install -y ca-certificates curl gnupg unzip wget \
     && mkdir -p /etc/apt/keyrings \
@@ -29,54 +32,33 @@ ENV PATH="/kobweb-${KOBWEB_CLI_VERSION}/bin:${PATH}"
 
 WORKDIR /project
 
+# Make gradlew executable
 RUN chmod +x gradlew
 
+# Create gradle properties
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
 # Set dummy MongoDB URI for build (will be replaced at runtime)
 ENV MONGODB_URI="mongodb://localhost:27017"
 
-# Build the site
-RUN ./gradlew :site:build --no-daemon --stacktrace
+# Build and export the site
+RUN ./gradlew :site:build --no-daemon --stacktrace && \
+    ./gradlew :site:kobwebExport --no-daemon --stacktrace
 
-# Try to export - this creates the server JAR
-RUN ./gradlew :site:kobwebExport --no-daemon --stacktrace || echo "Export had issues, but continuing"
+#-----------------------------------------------------------------------------
+# Stage 2: Runtime
+FROM eclipse-temurin:17
 
-# Debug: Check what was generated
-RUN echo "=== Checking .kobweb ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/ && \
-    echo "=== Checking .kobweb/server ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/server/ && \
-    echo "=== Checking .kobweb/site ===" && \
-    ls -la /project/${KOBWEB_APP_ROOT}/.kobweb/site/ 2>/dev/null || echo "site folder is empty!"
-
-# Copy static files to .kobweb/site if it's empty
-RUN if [ ! "$(ls -A /project/${KOBWEB_APP_ROOT}/.kobweb/site 2>/dev/null)" ]; then \
-        echo "Site folder is empty, copying static files..."; \
-        mkdir -p /project/${KOBWEB_APP_ROOT}/.kobweb/site; \
-        cp -r /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable/* /project/${KOBWEB_APP_ROOT}/.kobweb/site/; \
-        echo "Static files copied to .kobweb/site"; \
-    fi
-
-FROM java as run
-
-ARG KOBWEB_APP_ROOT
-
-# Copy the entire .kobweb directory
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
+# Copy the .kobweb directory from the builder stage
+COPY --from=builder /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb
 
 WORKDIR /app
 
+# MongoDB URI will be set at runtime
 ENV MONGODB_URI=""
 
-# Debug: Check what we have
-RUN echo "=== Final stage .kobweb ===" && \
-    ls -la /app/.kobweb/ && \
-    echo "=== Final stage .kobweb/server ===" && \
-    ls -la /app/.kobweb/server/ && \
-    echo "=== Final stage .kobweb/site ===" && \
-    ls -la /app/.kobweb/site/ 2>/dev/null || echo "site folder not found"
+EXPOSE 8080
 
-# Run the server JAR
+# Run the server
 ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
