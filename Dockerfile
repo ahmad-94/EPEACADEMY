@@ -13,6 +13,7 @@ FROM java as export
 # final stage, we'll only extract what we need from this stage, saving a lot
 # of space.
 
+# 👇 UPDATED to match your project version (0.23.3)
 ENV KOBWEB_CLI_VERSION=0.23.3
 ARG KOBWEB_APP_ROOT
 
@@ -33,10 +34,13 @@ RUN apt-get update \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y nodejs \
+    && apt-get install -y npm \
+    && npm install -g npm@latest \
+    && node --version && npm --version \
     && npm init -y \
     && npx playwright install --with-deps chromium
 
-# Fetch the latest version of the Kobweb CLI
+# Fetch the Kobweb CLI matching your project version
 RUN wget https://github.com/varabyte/kobweb-cli/releases/download/v${KOBWEB_CLI_VERSION}/kobweb-${KOBWEB_CLI_VERSION}.zip \
     && unzip kobweb-${KOBWEB_CLI_VERSION}.zip \
     && rm kobweb-${KOBWEB_CLI_VERSION}.zip
@@ -49,9 +53,20 @@ WORKDIR /project/${KOBWEB_APP_ROOT}
 # (many free Cloud tiers only give you 512M of RAM). The following amount
 # should be more than enough to build and export our site.
 RUN mkdir ~/.gradle && \
-    echo "org.gradle.jvmargs=-Xmx256m" >> ~/.gradle/gradle.properties
+    echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
+# Set MongoDB URI for the build (use a dummy value if your cluster is offline)
+# If your cluster is online, set this to your real connection string
+ENV MONGODB_URI="mongodb://localhost:27017"
+
+# Run the export
 RUN kobweb export --notty
+
+# Verify the export succeeded
+RUN test -d .kobweb && \
+    test -f .kobweb/server/server.jar && \
+    echo "Export successful!" || \
+    (echo "Export failed!" && exit 1)
 
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
@@ -60,6 +75,13 @@ FROM java as run
 
 ARG KOBWEB_APP_ROOT
 
+# Copy the .kobweb directory from the export stage
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
 
-ENTRYPOINT .kobweb/server/start.sh
+# Debug: Verify the contents
+RUN ls -la .kobweb/ && \
+    ls -la .kobweb/server/ && \
+    ls -la .kobweb/site/ 2>/dev/null || echo "site directory not found"
+
+# Run the server
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; else java -jar .kobweb/server/server.jar; fi"]
