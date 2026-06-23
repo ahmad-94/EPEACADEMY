@@ -55,8 +55,8 @@ WORKDIR /project/${KOBWEB_APP_ROOT}
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx512m" >> ~/.gradle/gradle.properties
 
-# Set MongoDB URI for the build (use a dummy value if your cluster is offline)
-# If your cluster is online, set this to your real connection string
+# Set MongoDB URI for the build - use a dummy value if your cluster is offline
+# If your cluster is online, you can remove this line and set it as an env var
 ENV MONGODB_URI="mongodb://localhost:27017"
 
 # Run the export
