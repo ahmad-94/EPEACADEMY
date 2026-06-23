@@ -1,11 +1,11 @@
 FROM eclipse-temurin:17
 
-# Copy the entire site folder
-COPY site /app/site
+# Copy the .kobweb folder
+COPY site/.kobweb /app/.kobweb
 
-WORKDIR /app/site
+WORKDIR /app
 
-# Debug: Check what was copied
+# Debug: Verify the files were copied correctly
 RUN echo "=== Verifying .kobweb contents ===" && \
     ls -la .kobweb/ && \
     echo "=== Verifying server directory ===" && \
@@ -15,9 +15,11 @@ RUN echo "=== Verifying .kobweb contents ===" && \
     echo "=== Checking for server.jar ===" && \
     test -f .kobweb/server/server.jar && echo "server.jar found!" || echo "server.jar NOT found!"
 
+# MongoDB URI will be set at runtime via Render environment variables
 ENV MONGODB_URI=""
 
+# Expose the port
 EXPOSE 8080
 
-# Run the server
-ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
+# Start the server - try start.sh first, fallback to server.jar
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f .kobweb/server/start.sh ]; then .kobweb/server/start.sh; else java -jar .kobweb/server/server.jar; fi"]
