@@ -13,8 +13,8 @@ RUN echo "=== Verifying .kobweb contents ===" && \
     echo "=== Checking for server.jar ===" && \
     test -f .kobweb/server/server.jar && echo "server.jar found!" || echo "server.jar NOT found!"
 
-# Make start.sh executable
-RUN chmod +x .kobweb/server/start.sh
+# Make start.sh executable (optional, but we won't use it)
+RUN chmod +x .kobweb/server/start.sh || true
 
 # MongoDB URI will be set at runtime via Render environment variables
 ENV MONGODB_URI=""
@@ -22,5 +22,5 @@ ENV MONGODB_URI=""
 # Expose the port
 EXPOSE 8080
 
-# Use the start.sh script which properly handles environment variables
-ENTRYPOINT ["/app/.kobweb/server/start.sh"]
+# Run the JAR directly with the correct path
+ENTRYPOINT ["java", "-jar", ".kobweb/server/server.jar"]
