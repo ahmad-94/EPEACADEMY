@@ -5,17 +5,19 @@ COPY site/.kobweb /app/.kobweb
 
 WORKDIR /app
 
-# Fix the start.sh script to use Linux paths and make it executable
-RUN sed -i 's/\r$//' .kobweb/server/start.sh && \
-    sed -i 's/\\/\//g' .kobweb/server/start.sh && \
-    chmod +x .kobweb/server/start.sh
+# Debug: Verify the files were copied correctly
+RUN echo "=== Verifying .kobweb contents ===" && \
+    ls -la .kobweb/ && \
+    echo "=== Verifying server directory ===" && \
+    ls -la .kobweb/server/ && \
+    echo "=== Checking for server.jar ===" && \
+    test -f .kobweb/server/server.jar && echo "server.jar found!" || echo "server.jar NOT found!"
 
-# Debug: Check what's in start.sh
-RUN echo "=== start.sh contents ===" && \
-    cat .kobweb/server/start.sh
+# Make start.sh executable (optional, but we won't use it)
+RUN chmod +x .kobweb/server/start.sh || true
 
 # Expose the port
 EXPOSE 8080
 
-# Use the fixed start.sh
-ENTRYPOINT ["/app/.kobweb/server/start.sh"]
+# 👇 Explicitly pass the environment variable to Java
+ENTRYPOINT ["/bin/sh", "-c", "java -DMONGODB_URI=${MONGODB_URI} -jar .kobweb/server/server.jar"]
