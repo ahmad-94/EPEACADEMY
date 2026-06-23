@@ -59,14 +59,19 @@ ARG KOBWEB_APP_ROOT
 # Copy the built static files from the build directory
 COPY --from=export /project/${KOBWEB_APP_ROOT}/build/dist/js/productionExecutable /app/site
 
-# Also copy .kobweb if it exists (for server functionality)
-COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb 2>/dev/null || echo "No .kobweb found"
+# Copy .kobweb if it exists - using a RUN command to handle the check
+RUN if [ -d "/project/${KOBWEB_APP_ROOT}/.kobweb" ]; then \
+        mkdir -p /app && \
+        cp -r /project/${KOBWEB_APP_ROOT}/.kobweb /app/.kobweb; \
+    fi
 
 # Debug: Check what was copied
 RUN echo "=== Checking /app/site contents ===" && \
     ls -la /app/site/ && \
     echo "=== Checking for index.html ===" && \
-    test -f /app/site/index.html && echo "index.html found!" || echo "index.html NOT found!"
+    test -f /app/site/index.html && echo "index.html found!" || echo "index.html NOT found!" && \
+    echo "=== Checking for .kobweb ===" && \
+    ls -la /app/.kobweb/ 2>/dev/null || echo ".kobweb not found"
 
 WORKDIR /app
 
