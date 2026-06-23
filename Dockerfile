@@ -49,7 +49,8 @@ WORKDIR /project/${KOBWEB_APP_ROOT}
 RUN mkdir ~/.gradle && \
     echo "org.gradle.jvmargs=-Xmx256m" >> ~/.gradle/gradle.properties
 
-# Run the export - this creates the .kobweb folder with server.jar
+# Run the export WITHOUT any layout parameter
+# The --notty flag is kept, but no --layout parameter is passed
 RUN kobweb export --notty && \
     echo "=== Verifying export output ===" && \
     ls -la .kobweb/ && \
