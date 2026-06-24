@@ -45,12 +45,24 @@ class MongoDB(
 
 ): MongoRepository {
 
-    private val client = KMongo.createClient(System.getenv("MONGODB_URI"))
+    private val client by lazy { KMongo.createClient(resolveMongoUri()) }
 
-    private val database = client.getDatabase(DATABASE_NAME)
-    private val userCollection = database.getCollection<User>()
-    private val postCollection = database.getCollection<Post>()
-    private val newsletterCollection = database.getCollection<Newsletter>()
+    private val database by lazy { client.getDatabase(DATABASE_NAME) }
+    private val userCollection by lazy { database.getCollection<User>() }
+    private val postCollection by lazy { database.getCollection<Post>() }
+    private val newsletterCollection by lazy { database.getCollection<Newsletter>() }
+
+    private fun resolveMongoUri(): String {
+        System.getenv("MONGODB_URI")?.let { return it }
+
+        val isProd = System.getProperty("kobweb.server.environment") == "PROD"
+        if (isProd) {
+            error("MONGODB_URI environment variable is not set")
+        }
+
+        context.logger.warn("MONGODB_URI not set; using mongodb://localhost:27017 for local development")
+        return "mongodb://localhost:27017"
+    }
 
 
     override suspend fun addPost(post: Post): Boolean {
