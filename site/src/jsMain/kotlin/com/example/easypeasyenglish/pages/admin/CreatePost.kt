@@ -387,7 +387,42 @@ fun CreateScreen() {
 
                         if (titleValid && thumbnailValid && contentValid) {
                             scope.launch {
-                                // ... post creation logic ...
+                                if (hasPostIdParam) {
+                                    val result = updatePost(
+                                        post = Post(
+                                            postId = uiState.id,
+                                            title = title,
+                                            subtitle = if (subtitle.trim().isEmpty()) null else subtitle,
+                                            thumbnail = thumbnail,
+                                            content = content,
+                                            category = uiState.selectedCategory,
+                                            popular = uiState.popularSwitch,
+                                            main = uiState.mainSwitch,
+                                            sponsored = uiState.sponsoredSwitch
+                                        )
+                                    )
+                                    if (result) {
+                                        context.router.navigateTo(Screen.AdminSuccess.updatePost(result))
+                                    }
+                                } else {
+                                    val result = addPost(
+                                        post = Post(
+                                            author = localStorage.getItem("username").toString(),
+                                            date = Date.now().toLong(),
+                                            title = title,
+                                            subtitle = if (subtitle.trim().isEmpty()) null else subtitle,
+                                            thumbnail = thumbnail,
+                                            content = content,
+                                            category = uiState.selectedCategory,
+                                            popular = uiState.popularSwitch,
+                                            main = uiState.mainSwitch,
+                                            sponsored = uiState.sponsoredSwitch
+                                        )
+                                    )
+                                    if (result) {
+                                        context.router.navigateTo(Screen.AdminSuccess.route)
+                                    }
+                                }
                             }
                         } else {
                             val missing = mutableListOf<String>()
