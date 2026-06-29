@@ -365,12 +365,9 @@ fun CreateScreen() {
                 createButton(
                     text = uiState.buttonText,
                     onClick = {
-
-                        if (!uiState.thumbnailInputDisabled) {
-                            (document.getElementById(Id.THUMBNAIL_INPUT) as HTMLInputElement).value
-                        }
-                        println("EDITOR tag = " + document.getElementById(Id.EDITOR)?.tagName)
-
+                        val title = (document.getElementById(Id.TITLE_INPUT) as HTMLInputElement).value
+                        val subtitle = (document.getElementById(Id.SUBTITLE_INPUT) as HTMLInputElement).value
+                        val content = (document.getElementById(Id.EDITOR) as HTMLTextAreaElement).value
                         val thumbnail = if (!uiState.thumbnailInputDisabled) {
                             (document.getElementById(Id.THUMBNAIL_INPUT) as HTMLInputElement).value
                         } else {
@@ -378,28 +375,26 @@ fun CreateScreen() {
                         }
 
                         uiState = uiState.copy(
-                            title = (document.getElementById(Id.TITLE_INPUT) as HTMLInputElement).value,
-                            subtitle = (document.getElementById(Id.SUBTITLE_INPUT) as HTMLInputElement).value,
-                            content = (document.getElementById(Id.EDITOR) as HTMLTextAreaElement).value,
+                            title = title,
+                            subtitle = subtitle,
+                            content = content,
                             thumbnail = thumbnail
                         )
 
-
-
                         if (
-                            uiState.title.isNotEmpty() &&
-                            uiState.thumbnail.isNotEmpty() &&
-                            uiState.content.isNotEmpty()
+                            title.isNotEmpty() &&
+                            thumbnail.isNotEmpty() &&
+                            content.isNotEmpty()
                         ) {
                             scope.launch {
                                 if (hasPostIdParam) {
                                     val result = updatePost(
                                         post = Post(
                                             postId = uiState.id,
-                                            title = uiState.title,
-                                            subtitle = uiState.subtitle,
-                                            thumbnail = uiState.thumbnail,
-                                            content = uiState.content,
+                                            title = title,
+                                            subtitle = subtitle,
+                                            thumbnail = thumbnail,
+                                            content = content,
                                             category = uiState.selectedCategory,
                                             popular = uiState.popularSwitch,
                                             main = uiState.mainSwitch,
@@ -414,10 +409,10 @@ fun CreateScreen() {
                                         post = Post(
                                             author = localStorage.getItem("username").toString(),
                                             date = Date.now().toLong(),
-                                            title = uiState.title,
-                                            subtitle = uiState.subtitle,
-                                            thumbnail = uiState.thumbnail,
-                                            content = uiState.content,
+                                            title = title,
+                                            subtitle = subtitle,
+                                            thumbnail = thumbnail,
+                                            content = content,
                                             category = uiState.selectedCategory,
                                             popular = uiState.popularSwitch,
                                             main = uiState.mainSwitch,
