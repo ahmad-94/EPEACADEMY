@@ -46,6 +46,7 @@ class MongoDB(
 ): MongoRepository {
 
     private val client by lazy { KMongo.createClient(resolveMongoUri()) }
+//private val client = KMongo.createClient()
 
     private val database by lazy { client.getDatabase(DATABASE_NAME) }
     private val userCollection by lazy { database.getCollection<User>() }

@@ -708,13 +708,15 @@ fun Editor(
     editorVisibility: Boolean,
     thumbnail: String = "",
 ) {
-    SideEffect {
+    LaunchedEffect(editorVisibility, thumbnail) {
         syncEditorPreviewVisibility(showEditor = editorVisibility, thumbnail = thumbnail)
-    }
-
-    LaunchedEffect(editorVisibility) {
         if (!editorVisibility) {
-            js("hljs.highlightAll()") as Unit
+            delay(100)
+            try {
+                js("hljs.highlightAll()")
+            } catch (e: Exception) {
+                println("Highlight.js error: ${e.message}")
+            }
         }
     }
 

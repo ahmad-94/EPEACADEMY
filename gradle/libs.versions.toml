@@ -1,10 +1,25 @@
 [versions]
+agp = "9.2.1"
 jetbrains-compose = "1.8.0"
 kobweb = "0.23.3"
-kotlin = "2.2.20"
+kotlin = "2.4.0"
 serialization = "1.9.0"
 kmongo = "5.2.0"
-play-services-base = "18.2.0"
+play-services-base = "18.10.0"
+core-ktx = "1.10.0"
+junit = "4.13.2"
+junit-version = "1.3.0"
+espresso-core = "3.7.0"
+lifecycle-runtime-ktx = "2.9.4"
+activity-compose = "1.13.0"
+compose-bom = "2026.06.00"
+nav-compose = "2.9.8"
+coroutines = "1.11.0"
+mongodb = "3.3.5"
+coil = "3.5.0"
+ktor-version = "3.4.0"
+
+
 
 [libraries]
 compose-html-core = { module = "org.jetbrains.compose.html:html-core", version.ref = "jetbrains-compose" }
@@ -19,12 +34,41 @@ silk-foundation = { module = "com.varabyte.kobweb:silk-foundation", version.ref 
 silk-icons-fa = { module = "com.varabyte.kobwebx:silk-icons-fa", version.ref = "kobweb" }
 silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
 
+
+
+nav-compose = {module="androidx.navigation:navigation-compose", version.ref = "nav-compose"}
+kotlinx-coroutines = {module="org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines"}
+mongodb-sync = { module = "io.github.xilinjia.krdb:library-base", version.ref = "mongodb" }
+coil-compose = { module ="io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor-version" }
+ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor-version" }
+ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor-version" }
+ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-version" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-version" }
+
+
 kotlinx-serialization = {module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 kmongo-database = { module = "org.litote.kmongo:kmongo-coroutine", version.ref = "kmongo" }
 kmongo-serialization = { module = "org.litote.kmongo:kmongo-serialization", version.ref = "kmongo" }
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "play-services-base" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit-version" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+ui = { group = "androidx.compose.ui", name = "ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+material3 = { group = "androidx.compose.material3", name = "material3" }
+material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kobweb-application = { id = "com.varabyte.kobweb.application", version.ref = "kobweb" }
 kobweb-library = { id = "com.varabyte.kobweb.library", version.ref = "kobweb" }
@@ -32,3 +76,5 @@ kobweb-worker = { id = "com.varabyte.kobweb.worker", version.ref = "kobweb" }
 kobwebx-markdown = { id = "com.varabyte.kobwebx.markdown", version.ref = "kobweb" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization-plugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+mongodb-realm = { id = "io.github.xilinjia.krdb", version.ref = "mongodb" }
+
