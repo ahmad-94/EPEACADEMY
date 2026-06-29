@@ -203,7 +203,7 @@ fun postContent(
                     property("-webkit-box-orient", "vertical")
                 }
             ,
-            text = post.subtitle
+            text = post.subtitle ?: ""
         )
         Row(
             modifier = PostPreviewStyle.toModifier()

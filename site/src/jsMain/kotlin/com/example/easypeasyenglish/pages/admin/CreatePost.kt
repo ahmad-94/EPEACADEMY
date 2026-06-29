@@ -106,7 +106,7 @@ import kotlin.js.Date
 data class CreatePageUiState(
     var id: String = "",
     var title: String = "",
-    var subtitle: String = "",
+    var subtitle: String? = null,
     var thumbnail: String = "",
     var content: String = "",
     var buttonText: String = "Create",
@@ -125,7 +125,7 @@ data class CreatePageUiState(
     fun reset() = this.copy(
         id = "",
         title = "",
-        subtitle = "",
+        subtitle = null,
         thumbnail = "",
         content = "",
         buttonText = "Create",
@@ -301,7 +301,7 @@ fun CreateScreen() {
                          .noBorder()
                          .toAttrs {
                              attr("placeholder", "Subtitle")
-                             attr("value", uiState.subtitle)
+                             attr("value", uiState.subtitle ?: "")
                          },
                      type = InputType.Text,
 
@@ -388,7 +388,6 @@ fun CreateScreen() {
 
                         if (
                             uiState.title.isNotEmpty() &&
-                            uiState.subtitle.isNotEmpty() &&
                             uiState.thumbnail.isNotEmpty() &&
                             uiState.content.isNotEmpty()
                         ) {
