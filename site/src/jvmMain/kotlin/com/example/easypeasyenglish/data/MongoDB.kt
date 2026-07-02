@@ -111,13 +111,7 @@ class MongoDB(
     override suspend fun readLatestPosts(skip: Int): List<PostWithoutDetails> {
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
-            .find(
-                and(
-                    PostWithoutDetails::main eq false,
-                    PostWithoutDetails::sponsored eq false,
-                    PostWithoutDetails::popular eq false,
-                )
-            )
+            .find()
             .sort(descending(PostWithoutDetails::date))
             .limit(POSTS_PER_PAGE)
             .skip(skip)
@@ -159,7 +153,12 @@ class MongoDB(
         val regexQuery = query.toRegex(RegexOption.IGNORE_CASE)
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
-            .find(PostWithoutDetails::title regex regexQuery)
+            .find(
+                org.litote.kmongo.or(
+                    PostWithoutDetails::title regex regexQuery,
+                    PostWithoutDetails::content regex regexQuery
+                )
+            )
             .sort(descending(PostWithoutDetails::date))
             .skip(skip)
             .limit(POSTS_PER_PAGE)
