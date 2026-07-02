@@ -124,6 +124,16 @@ class MongoDB(
             .toList()
     }
 
+    override suspend fun readAllPosts(skip: Int): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find()
+            .sort(descending(PostWithoutDetails::date))
+            .limit(POSTS_PER_PAGE)
+            .skip(skip)
+            .toList()
+    }
+
     override suspend fun readSponsoredPosts(): List<PostWithoutDetails> {
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
@@ -136,7 +146,7 @@ class MongoDB(
     override suspend fun readPopularPosts(skip: Int): List<PostWithoutDetails> {
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
-            .find(PostWithoutDetails::popular eq false,)
+            .find(PostWithoutDetails::popular eq true)
             .sort(descending(PostWithoutDetails::date))
             .limit(POSTS_PER_PAGE)
             .skip(skip)

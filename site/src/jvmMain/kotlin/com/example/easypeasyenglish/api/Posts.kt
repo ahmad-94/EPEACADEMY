@@ -55,7 +55,7 @@ suspend fun readMainPosts(context: ApiContext) {
         val mainPosts = context.data.getValue<MongoRepository>().readMainPosts()
         context.res.setBody(data = ApiListResponse.Success(mainPosts))
     } catch (e: Exception) {
-        context.res.setBody(ApiResponse.Error(e.toString()))
+        context.res.setBody(ApiListResponse.Error(e.toString()))
     }
 }
 
@@ -66,7 +66,18 @@ suspend fun readLatestPosts(context: ApiContext) {
         val latestPosts = context.data.getValue<MongoRepository>().readLatestPosts(latestPostsToSkip)
         context.res.setBody(data = ApiListResponse.Success(latestPosts))
     } catch (e: Exception) {
-        context.res.setBody(ApiResponse.Error(e.toString()))
+        context.res.setBody(ApiListResponse.Error(e.toString()))
+    }
+}
+
+@Api("readAllPosts")
+suspend fun readAllPosts(context: ApiContext) {
+    try {
+        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val posts = context.data.getValue<MongoRepository>().readAllPosts(skip)
+        context.res.setBody(data = ApiListResponse.Success(posts))
+    } catch (e: Exception) {
+        context.res.setBody(ApiListResponse.Error(e.toString()))
     }
 }
 
@@ -77,7 +88,7 @@ suspend fun readSponsoredPosts(context: ApiContext) {
         val sponsoredPosts = context.data.getValue<MongoRepository>().readSponsoredPosts()
         context.res.setBody(data = ApiListResponse.Success(sponsoredPosts))
     } catch (e: Exception) {
-        context.res.setBody(ApiResponse.Error(e.toString()))
+        context.res.setBody(ApiListResponse.Error(e.toString()))
     }
 }
 
@@ -85,10 +96,10 @@ suspend fun readSponsoredPosts(context: ApiContext) {
 suspend fun readPopularPosts(context: ApiContext) {
     try {
         val popularPostsToSkip = context.req.params["skip"]?.toInt() ?: 0
-        val popularPosts = context.data.getValue<MongoRepository>().readLatestPosts(popularPostsToSkip)
+        val popularPosts = context.data.getValue<MongoRepository>().readPopularPosts(popularPostsToSkip)
         context.res.setBody(data = ApiListResponse.Success(popularPosts))
     } catch (e: Exception) {
-        context.res.setBody(ApiResponse.Error(e.toString()))
+        context.res.setBody(ApiListResponse.Error(e.toString()))
     }
 }
 @Api("deleteSelectedPosts")
