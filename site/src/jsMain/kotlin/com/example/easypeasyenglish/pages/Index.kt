@@ -171,14 +171,14 @@ fun HomePage() {
 
         )
 
-//
-//        SponsoredPostsSection(
-//            breakpoint = breakpoint,
-//            posts = sponsoredPosts,
-//            onClick = {
-//                context.router.navigateTo(Screen.PostPage.getPost(id = it))
-//            }
-//        )
+
+        SponsoredPostsSection(
+            breakpoint = breakpoint,
+            posts = sponsoredPosts,
+            onClick = {
+                context.router.navigateTo(Screen.PostPage.getPost(id = it))
+            }
+        )
 
         LatestPostsSection(
             title = "Popular Posts",
