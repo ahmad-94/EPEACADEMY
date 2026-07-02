@@ -129,7 +129,6 @@ class MongoDB(
             .withDocumentClass(PostWithoutDetails::class.java)
             .find()
             .sort(descending(PostWithoutDetails::date))
-            .limit(POSTS_PER_PAGE)
             .skip(skip)
             .toList()
     }
