@@ -84,7 +84,7 @@ fun LoginScreen(){
                     .margin(bottom = 50.px)
                     .toAttrs()
             ) {
-                Text("Easy Peasy English")
+                Text("EPE ACADEMY")
             }
             Input(
                 type = InputType.Text,

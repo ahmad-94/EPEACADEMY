@@ -30,6 +30,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
+import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
@@ -49,11 +50,16 @@ import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.framework.annotations.DelicateApi
 import com.varabyte.kobweb.silk.components.icons.fa.FaBars
+import com.varabyte.kobweb.silk.components.icons.fa.FaFacebook
+import com.varabyte.kobweb.silk.components.icons.fa.FaInstagram
+import com.varabyte.kobweb.silk.components.icons.fa.FaTiktok
 import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
+import com.varabyte.kobweb.silk.components.icons.fa.FaYoutube
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import kotlinx.browser.window
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.CSSColorValue
@@ -99,7 +105,7 @@ private fun SidePanelInternal() {
                 .margin(bottom = 60.px)
                 .toAttrs()
         ) {
-            Text("Easy Peasy English")
+            Text("EPE ACADEMY")
         }
         NavigationItems()
     }
@@ -168,7 +174,7 @@ private fun CollapsedSidePanel(onMenuClick: () -> Unit) {
                 .textAlign(TextAlign.Center)
                 .toAttrs()
         ) {
-            Text("Easy Peasy English")
+            Text("EPE ACADEMY")
         }
     }
 }
@@ -213,10 +219,9 @@ fun OverflowSidePanel(
     ) {
         Column(
             modifier = Modifier
-                .padding(all = 24.px)
                 .fillMaxHeight()
                 .translateX(translateX)
-                .width(if (breakpoint < Breakpoint.MD) 50.percent else 32.percent)
+                .width(if (breakpoint < Breakpoint.MD) 70.percent else 30.percent)
                 .overflow(Overflow.Auto)
                 .scrollBehavior(ScrollBehavior.Smooth)
                 .styleModifier {
@@ -224,46 +229,55 @@ fun OverflowSidePanel(
                     property("opacity", opacity.toString())
                     property("transition", "transform 600ms ease-in-out, opacity 600ms ease-in-out")
                 }
-                .backgroundColor(Colors.Red)
+                .backgroundColor(Colors.White)
 
         ) {
-           Row(
-               modifier = Modifier.margin(bottom = 24.px),
-               verticalAlignment = Alignment.CenterVertically
-           ) {
-               FaXmark(
-                   modifier = Modifier
-                       .margin(right = 16.px)
-                       .color(Colors.White)
-                       .cursor(Cursor.Pointer)
-                       .onClick {
-                           coroutineScope.launch {
-                               translateX = (-100).percent
-                               opacity = 0.percent
-                               println("Animation started")
-                               delay(600)
-                               println("Calling onMenuClose() now")
-                               onMenuClose()
-                           }
-
-                       },
-                   size = IconSize.LG
-               )
-               H1(
-                   attrs = Modifier
-                       .color(Colors.White)
-                       .fontSize(20.px)
-                       .fontWeight(FontWeight.Bold)
-                       .textAlign(TextAlign.Center)
-                       .onClick { context.router.navigateTo(Screen.HomePage.route) }
-                       .cursor(Cursor.Pointer)
-                       .toAttrs()
-               ) {
-                   Text(
-                       "Easy Peasy English"
-                   )
-               }
-           }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.px)
+                    .backgroundColor(Colors.Red),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(leftRight = 16.px),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        FaXmark(
+                            modifier = Modifier
+                                .color(Colors.White)
+                                .cursor(Cursor.Pointer)
+                                .onClick {
+                                    coroutineScope.launch {
+                                        translateX = (-100).percent
+                                        opacity = 0.percent
+                                        delay(600)
+                                        onMenuClose()
+                                    }
+                                },
+                            size = IconSize.LG
+                        )
+                    }
+                    SpanText(
+                        text = "EPE ACADEMY",
+                        modifier = Modifier
+                            .color(Colors.White)
+                            .fontSize(28.px)
+                            .fontWeight(FontWeight.Bold)
+                            .cursor(Cursor.Pointer)
+                            .onClick { context.router.navigateTo(Screen.HomePage.route) }
+                    )
+                }
+            }
+            SocialMediaLinks(onLinkClick = {
+                coroutineScope.launch {
+                    translateX = (-100).percent
+                    opacity = 0.percent
+                    delay(600)
+                    onMenuClose()
+                }
+            })
             content()
         }
     }
@@ -307,6 +321,79 @@ private fun NavigationItem(
                     .color(itemColor)
             )
         }
+    }
+}
+
+@Composable
+fun SocialMediaLinks(onLinkClick: () -> Unit = {}) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(topBottom = 24.px),
+        verticalArrangement = Arrangement.Center
+    ) {
+        SocialNavigationItem(
+            label = "YouTube",
+            icon = { FaYoutube(modifier = Modifier.color(Colors.Red), size = IconSize.LG) },
+            onClick = { 
+                window.open("https://www.youtube.com/channel/UCJJ8KFpya16lfWYar7vGB1A?sub_confirmation=1", "_blank")
+                onLinkClick()
+            }
+        )
+        SocialNavigationItem(
+            label = "Facebook",
+            icon = { FaFacebook(modifier = Modifier.color(Color("#1877F2")), size = IconSize.LG) },
+            onClick = { 
+                window.open("https://www.facebook.com/ahmad.shiravand.12", "_blank")
+                onLinkClick()
+            },
+            modifier = Modifier.margin(top = 16.px)
+        )
+        SocialNavigationItem(
+            label = "Instagram",
+            icon = { FaInstagram(modifier = Modifier.color(Color("#E4405F")), size = IconSize.LG) },
+            onClick = { 
+                window.open("https://www.instagram.com/epeacademy?igsh=aXlubDJ5bXU3MGE=", "_blank")
+                onLinkClick()
+            },
+            modifier = Modifier.margin(top = 16.px)
+        )
+        SocialNavigationItem(
+            label = "TikTok",
+            icon = { FaTiktok(modifier = Modifier.color(Colors.Black), size = IconSize.LG) },
+            onClick = { 
+                window.open("https://tiktok.com/@epeacademy", "_blank")
+                onLinkClick()
+            },
+            modifier = Modifier.margin(top = 16.px)
+        )
+    }
+}
+
+@Composable
+fun SocialNavigationItem(
+    label: String,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = Modifier
+            .then(modifier)
+            .fillMaxWidth()
+            .padding(leftRight = 24.px, topBottom = 12.px)
+            .cursor(Cursor.Pointer)
+            .onClick { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier.width(40.px)) {
+            icon()
+        }
+        SpanText(
+            text = label,
+            modifier = Modifier
+                .color(Colors.Black)
+                .fontSize(18.px)
+                .fontWeight(FontWeight.Bold)
+        )
     }
 }
 
