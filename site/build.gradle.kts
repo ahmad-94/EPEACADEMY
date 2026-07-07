@@ -20,6 +20,10 @@ kobweb {
             description.set("The best place to learn English easily. Join our academy today!")
             head.add {
                 meta {
+                    attributes["name"] = "msvalidate.01"
+                    content = "5B4A3C847AF29EAA787850541A5D3BEC"
+                }
+                meta {
                     attributes["name"] = "title"
                     content = "Easy Peasy English-EPE Academy"
                 }
