@@ -1,5 +1,6 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
+import kotlinx.html.meta
 import kotlinx.html.script
 
 plugins {
@@ -16,8 +17,41 @@ version = "1.0-SNAPSHOT"
 kobweb {
     app {
         index {
-            description.set("Powered by Kobweb")
+            description.set("The best place to learn English easily. Join our academy today!")
             head.add {
+                meta {
+                    attributes["name"] = "title"
+                    content = "Easy Peasy English-EPE Academy"
+                }
+                meta {
+                    attributes["name"] = "description"
+                    content = "The best place to learn English easily. Join our academy today!"
+                }
+                meta {
+                    attributes["property"] = "og:title"
+                    content = "Easy Peasy English Academy"
+                }
+                meta {
+                    attributes["property"] = "og:description"
+                    content = "Learn English easily with our interactive lessons and expert guidance."
+                }
+                meta {
+                    attributes["property"] = "og:image"
+                    content = "https://epeacademy.onrender.com/icons/epe_academy.png"
+                }
+                meta {
+                    attributes["property"] = "og:url"
+                    content = "https://epeacademy.onrender.com/"
+                }
+                meta {
+                    attributes["property"] = "og:type"
+                    content = "website"
+                }
+                meta {
+                    attributes["name"] = "twitter:card"
+                    content = "summary_large_image"
+                }
+
                 script {
                     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
                 }
