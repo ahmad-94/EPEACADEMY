@@ -82,6 +82,10 @@ kobweb {
                     href = "/github-dark.min.css"
                     rel = "stylesheet"
                 }
+                link {
+                    rel = "icon"
+                    href = "/icons/epe_academy.png"
+                }
             }
         }
 
