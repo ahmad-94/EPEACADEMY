@@ -23,6 +23,11 @@ kobweb {
                 unsafe {
                     raw("<title>Easy Peasy English Academy</title>")
                 }
+                link {
+                    rel = "icon"
+                    type = "image/png"
+                    href = "/icons/epe_academy.png"
+                }
                 meta {
                     attributes["name"] = "google-site-verification"
                     content = "C0pwLwSDSHG4xXGraUB0j2t8OnsdY1QezmLxepjkz8w"
@@ -81,10 +86,6 @@ kobweb {
                 link {
                     href = "/github-dark.min.css"
                     rel = "stylesheet"
-                }
-                link {
-                    rel = "icon"
-                    href = "/icons/epe_academy.png"
                 }
             }
         }
