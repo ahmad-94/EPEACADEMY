@@ -29,7 +29,9 @@ import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
+import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.core.isExporting
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.framework.annotations.DelicateApi
 import com.varabyte.kobweb.silk.components.text.SpanText
@@ -57,6 +59,7 @@ fun HomePage() {
     var showMorePopular by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        if (AppGlobals.isExporting) return@LaunchedEffect
         fetchMainPosts(
             onSuccess = {
                 mainPosts = it
@@ -72,8 +75,9 @@ fun HomePage() {
             onSuccess = {
                 console.log("Success fetching latest posts:", latestPosts)
                 if (it is ApiListResponse.Success ) {
+                    latestPosts.clear() // Ensure we don't have duplicates
                     latestPosts.addAll(it.data)
-                    latestPostsToSkip += POSTS_PER_PAGE
+                    latestPostsToSkip = POSTS_PER_PAGE
                     if (it.data.size >= POSTS_PER_PAGE) showMoreLatest = true
                 }
             },
