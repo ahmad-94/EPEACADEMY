@@ -1,6 +1,6 @@
-2026-07-10 11:49:29.940 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
-2026-07-10 11:49:29.942 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
-2026-07-10 11:49:29.999 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
+2026-07-10 12:39:41.603 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
+2026-07-10 12:39:41.605 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
+2026-07-10 12:39:41.656 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
 io.ktor.server.engine.internal.ReloadingException: Module function cannot be found for the fully qualified name 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke'
 	at io.ktor.server.engine.internal.CallableUtilsKt.executeModuleFunction(CallableUtils.kt:68)
 	at io.ktor.server.engine.EmbeddedServer$launchModuleByName$2.invokeSuspend(EmbeddedServerJvm.kt:443)
@@ -46,75 +46,21 @@ io.ktor.server.engine.internal.ReloadingException: Module function cannot be fou
 	at kotlin.coroutines.ContinuationKt.startCoroutine(Continuation.kt:115)
 	at kotlin.coroutines.jvm.internal.RunSuspendKt.runSuspend(RunSuspend.kt:19)
 	at com.varabyte.kobweb.server.ApplicationKt.main(Application.kt)
-2026-07-10 11:49:30.002 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
-2026-07-10 11:49:30.004 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
-2026-07-10 11:49:30.101 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 11ms.
-2026-07-10 11:49:30.140 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
-2026-07-10 11:49:30.223 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
-2026-07-10 11:49:30.235 [main] INFO  io.ktor.server.Application - Application started in 0.555 seconds.
-2026-07-10 11:49:30.464 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
-2026-07-10 11:50:18.588 [DefaultDispatcher-worker-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
-2026-07-10 11:50:35.885 [eventLoopGroupProxy-4-4] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
-2026-07-10 11:50:46.975 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
-2026-07-10 11:51:06.147 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
-2026-07-10 11:51:19.404 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
-2026-07-10 11:51:33.324 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
-2026-07-10 11:52:03.412 [eventLoopGroupProxy-4-19] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
-2026-07-10 11:52:09.036 [eventLoopGroupProxy-4-18] WARN  io.ktor.server.Application - MONGODB_URI not set; using mongodb://localhost:27017 for local development
-2026-07-10 11:52:09.463 [DefaultDispatcher-worker-6] ERROR io.ktor.server.Application - io.ktor.utils.io.ClosedByteChannelException: Cannot write to channel
-	at io.ktor.utils.io.CloseToken$wrapCause$1.invoke(CloseToken.kt:16)
-	at io.ktor.utils.io.CloseToken$wrapCause$1.invoke(CloseToken.kt:16)
-	at io.ktor.utils.io.CloseToken.wrapCause(CloseToken.kt:21)
-	at io.ktor.utils.io.CloseToken.wrapCause$default(CloseToken.kt:16)
-	at io.ktor.utils.io.ByteChannel.getClosedCause(ByteChannel.kt:61)
-	at io.ktor.utils.io.ByteReadChannelOperationsKt.rethrowCloseCauseIfNeeded(ByteReadChannelOperations.kt:554)
-	at io.ktor.utils.io.ByteChannel.flush(ByteChannel.kt:94)
-	at io.ktor.utils.io.ByteReadChannelOperationsKt.copyTo(ByteReadChannelOperations.kt:201)
-	at io.ktor.utils.io.ByteReadChannelOperationsKt$copyTo$2.invokeSuspend(ByteReadChannelOperations.kt)
-	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-	at kotlinx.coroutines.DispatchedTaskKt.resume(DispatchedTask.kt:233)
-	at kotlinx.coroutines.DispatchedTaskKt.resumeUnconfined(DispatchedTask.kt:175)
-	at kotlinx.coroutines.DispatchedTaskKt.dispatch(DispatchedTask.kt:147)
-	at kotlinx.coroutines.CancellableContinuationImpl.dispatchResume(CancellableContinuationImpl.kt:470)
-	at kotlinx.coroutines.CancellableContinuationImpl.resumeImpl$kotlinx_coroutines_core(CancellableContinuationImpl.kt:504)
-	at kotlinx.coroutines.CancellableContinuationImpl.resumeImpl$kotlinx_coroutines_core$default(CancellableContinuationImpl.kt:493)
-	at kotlinx.coroutines.CancellableContinuationImpl.resumeWith(CancellableContinuationImpl.kt:359)
-	at io.ktor.utils.io.ByteChannel$Slot$Task$DefaultImpls.resume(ByteChannel.kt:236)
-	at io.ktor.utils.io.ByteChannel$Slot$Read.resume(ByteChannel.kt:242)
-	at io.ktor.utils.io.ByteChannel.flushWriteBuffer(ByteChannel.kt:389)
-	at io.ktor.utils.io.ByteChannel.flush(ByteChannel.kt:96)
-	at io.ktor.utils.io.ByteWriteChannelOperations_jvmKt.writeFully(ByteWriteChannelOperations.jvm.kt:21)
-	at io.ktor.util.DeflaterKt.deflateWhile(Deflater.kt:52)
-	at io.ktor.util.DeflaterKt.deflateTo(Deflater.kt:82)
-	at io.ktor.util.DeflaterKt.access$deflateTo(Deflater.kt:1)
-	at io.ktor.util.DeflaterKt$deflated$1.invokeSuspend(Deflater.kt:112)
-	at io.ktor.util.DeflaterKt$deflated$1.invoke(Deflater.kt)
-	at io.ktor.util.DeflaterKt$deflated$1.invoke(Deflater.kt)
-	at io.ktor.utils.io.ByteWriteChannelOperationsKt$writer$job$1.invokeSuspend(ByteWriteChannelOperations.kt:179)
-	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
-	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
-	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:829)
-	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
-	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
-Caused by: io.ktor.util.cio.ChannelWriteException: Cannot write to channel
-	at io.ktor.server.netty.cio.NettyHttpResponsePipeline.respondWithFailure(NettyHttpResponsePipeline.kt:100)
-	at io.ktor.server.netty.cio.NettyHttpResponsePipeline.respondWithBodyAndTrailerMessage(NettyHttpResponsePipeline.kt:253)
-	at io.ktor.server.netty.cio.NettyHttpResponsePipeline.access$respondWithBodyAndTrailerMessage(NettyHttpResponsePipeline.kt:24)
-	at io.ktor.server.netty.cio.NettyHttpResponsePipeline$respondWithBodyAndTrailerMessage$1.invokeSuspend(NettyHttpResponsePipeline.kt)
-	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
-	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
-	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
-	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:507)
-	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:182)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1073)
-	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
-	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
-	at java.base/java.lang.Thread.run(Thread.java:842)
-Caused by: io.netty.channel.StacklessClosedChannelException
-	at io.netty.channel.AbstractChannel$AbstractUnsafe.write(Object, ChannelPromise)(Unknown Source)
-
-2026-07-10 11:52:33.516 [eventLoopGroupProxy-4-2] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
-2026-07-10 11:53:07.516 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
-2026-07-10 11:53:08.648 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
+2026-07-10 12:39:41.659 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
+2026-07-10 12:39:41.661 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
+2026-07-10 12:39:41.758 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 10ms.
+2026-07-10 12:39:41.792 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
+2026-07-10 12:39:41.867 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
+2026-07-10 12:39:41.877 [main] INFO  io.ktor.server.Application - Application started in 0.473 seconds.
+2026-07-10 12:39:42.078 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
+2026-07-10 12:40:15.123 [DefaultDispatcher-worker-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
+2026-07-10 12:40:19.801 [DefaultDispatcher-worker-5] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
+2026-07-10 12:40:25.925 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
+2026-07-10 12:40:31.640 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
+2026-07-10 12:40:35.627 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
+2026-07-10 12:40:40.403 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
+2026-07-10 12:40:46.181 [eventLoopGroupProxy-4-18] WARN  io.ktor.server.Application - MONGODB_URI not set; using mongodb://localhost:27017 for local development
+2026-07-10 12:40:55.802 [eventLoopGroupProxy-4-19] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
+2026-07-10 12:41:17.079 [DefaultDispatcher-worker-9] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
+2026-07-10 12:41:35.114 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
+2026-07-10 12:41:36.228 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
