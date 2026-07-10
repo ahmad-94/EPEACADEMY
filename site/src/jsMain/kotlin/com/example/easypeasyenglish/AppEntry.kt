@@ -11,6 +11,7 @@ import com.varabyte.kobweb.silk.init.InitSilkContext
 import com.varabyte.kobweb.silk.init.registerStyleBase
 import com.varabyte.kobweb.silk.style.common.SmoothColorStyle
 import com.varabyte.kobweb.silk.style.toModifier
+import kotlinx.browser.document
 
 
 @InitSilk
@@ -21,6 +22,9 @@ fun initStyles(ctx: InitSilkContext) {
 @App
 @Composable
 fun AppEntry(content: @Composable () -> Unit) {
+    LaunchedEffect(Unit) {
+        document.title = "Easy Peasy English"
+    }
     SilkApp {
         Surface(SmoothColorStyle.toModifier().fillMaxHeight()) {
             content()
