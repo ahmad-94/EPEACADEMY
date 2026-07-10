@@ -1,6 +1,6 @@
-2026-07-10 12:59:29.076 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
-2026-07-10 12:59:29.079 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
-2026-07-10 12:59:29.131 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
+2026-07-10 13:11:42.815 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
+2026-07-10 13:11:42.828 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
+2026-07-10 13:11:42.924 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
 io.ktor.server.engine.internal.ReloadingException: Module function cannot be found for the fully qualified name 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke'
 	at io.ktor.server.engine.internal.CallableUtilsKt.executeModuleFunction(CallableUtils.kt:68)
 	at io.ktor.server.engine.EmbeddedServer$launchModuleByName$2.invokeSuspend(EmbeddedServerJvm.kt:443)
@@ -46,21 +46,21 @@ io.ktor.server.engine.internal.ReloadingException: Module function cannot be fou
 	at kotlin.coroutines.ContinuationKt.startCoroutine(Continuation.kt:115)
 	at kotlin.coroutines.jvm.internal.RunSuspendKt.runSuspend(RunSuspend.kt:19)
 	at com.varabyte.kobweb.server.ApplicationKt.main(Application.kt)
-2026-07-10 12:59:29.133 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
-2026-07-10 12:59:29.135 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
-2026-07-10 12:59:29.231 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 14ms.
-2026-07-10 12:59:29.277 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
-2026-07-10 12:59:29.372 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
-2026-07-10 12:59:29.384 [main] INFO  io.ktor.server.Application - Application started in 0.518 seconds.
-2026-07-10 12:59:29.615 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
-2026-07-10 13:00:13.850 [DefaultDispatcher-worker-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
-2026-07-10 13:00:17.540 [DefaultDispatcher-worker-9] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
-2026-07-10 13:00:23.328 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
-2026-07-10 13:00:26.500 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
-2026-07-10 13:00:30.661 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
-2026-07-10 13:00:34.448 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
-2026-07-10 13:00:39.751 [eventLoopGroupProxy-4-18] WARN  io.ktor.server.Application - MONGODB_URI not set; using mongodb://localhost:27017 for local development
-2026-07-10 13:00:53.977 [eventLoopGroupProxy-4-19] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
-2026-07-10 13:01:08.588 [eventLoopGroupProxy-4-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
-2026-07-10 13:01:23.235 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
-2026-07-10 13:01:24.351 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
+2026-07-10 13:11:42.927 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
+2026-07-10 13:11:42.931 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
+2026-07-10 13:11:43.075 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 17ms.
+2026-07-10 13:11:43.137 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
+2026-07-10 13:11:43.256 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
+2026-07-10 13:11:43.272 [main] INFO  io.ktor.server.Application - Application started in 0.795 seconds.
+2026-07-10 13:11:43.609 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
+2026-07-10 13:12:05.273 [DefaultDispatcher-worker-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
+2026-07-10 13:12:13.494 [eventLoopGroupProxy-4-4] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
+2026-07-10 13:12:19.140 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
+2026-07-10 13:12:23.269 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
+2026-07-10 13:12:28.762 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
+2026-07-10 13:12:33.922 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
+2026-07-10 13:12:39.787 [eventLoopGroupProxy-4-18] WARN  io.ktor.server.Application - MONGODB_URI not set; using mongodb://localhost:27017 for local development
+2026-07-10 13:12:45.195 [DefaultDispatcher-worker-8] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
+2026-07-10 13:12:57.912 [DefaultDispatcher-worker-1] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
+2026-07-10 13:13:15.693 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
+2026-07-10 13:13:16.810 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
