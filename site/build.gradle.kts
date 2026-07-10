@@ -2,6 +2,7 @@ import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.script
+import kotlinx.html.unsafe
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -19,6 +20,13 @@ kobweb {
         index {
             description.set("The best place to learn English easily. Join our academy today!")
             head.add {
+                unsafe {
+                    raw("<title>Easy Peasy English Academy</title>")
+                }
+                meta {
+                    attributes["name"] = "google-site-verification"
+                    content = "C0pwLwSDSHG4xXGraUB0j2t8OnsdY1QezmLxepjkz8w"
+                }
                 meta {
                     attributes["name"] = "msvalidate.01"
                     content = "5B4A3C847AF29EAA787850541A5D3BEC"
