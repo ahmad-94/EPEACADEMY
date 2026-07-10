@@ -11,6 +11,7 @@ import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.*
 import com.varabyte.kobweb.silk.components.icons.fa.FaFacebook
 import com.varabyte.kobweb.silk.components.icons.fa.FaInstagram
+import com.varabyte.kobweb.silk.components.icons.fa.FaTiktok
 import com.varabyte.kobweb.silk.components.icons.fa.FaYoutube
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.navigation.Link
@@ -36,17 +37,23 @@ fun FooterSection() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SocialIcon(
+                    href = " https://tiktok.com/@epeacademy",
+                    icon = { FaTiktok(size = IconSize.XL) }
+                )
+                SocialIcon(
                     href = "https://www.facebook.com/ahmad.shiravand.12",
-                    icon = { FaFacebook(size = IconSize.LG) }
+                    icon = { FaFacebook(size = IconSize.XL) }
                 )
                 SocialIcon(
                     href = "https://www.instagram.com/epeacademy?igsh=aXlubDJ5bXU3MGE=",
-                    icon = { FaInstagram(size = IconSize.LG) }
+                    icon = { FaInstagram(size = IconSize.XL) }
                 )
                 SocialIcon(
                     href = "https://www.youtube.com/channel/UCJJ8KFpya16lfWYar7vGB1A?sub_confirmation=1",
-                    icon = { FaYoutube(size = IconSize.LG) }
+                    icon = { FaYoutube(size = IconSize.XL) }
                 )
+
+
             }
             Row {
                 SpanText(

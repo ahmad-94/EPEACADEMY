@@ -1,6 +1,6 @@
-2026-07-11 01:27:34.413 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
-2026-07-11 01:27:34.417 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
-2026-07-11 01:27:34.519 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
+2026-07-11 01:47:12.257 [main] DEBUG io.ktor.server.Application - Java Home: C:\Program Files\Java
+2026-07-11 01:47:12.261 [main] DEBUG io.ktor.server.Application - Class Loader: jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93: [file:/C:/Users/Ahmad/CobWeb/easypeayenglish/site/.kobweb/server/server.jar!/okio/]
+2026-07-11 01:47:12.331 [main] DEBUG io.ktor.server.Application - Failed to load module 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke' by classpath reference, falling back to currently loaded value
 io.ktor.server.engine.internal.ReloadingException: Module function cannot be found for the fully qualified name 'com.varabyte.kobweb.server.ApplicationKt$main$engine$1.invoke'
 	at io.ktor.server.engine.internal.CallableUtilsKt.executeModuleFunction(CallableUtils.kt:68)
 	at io.ktor.server.engine.EmbeddedServer$launchModuleByName$2.invokeSuspend(EmbeddedServerJvm.kt:443)
@@ -46,20 +46,20 @@ io.ktor.server.engine.internal.ReloadingException: Module function cannot be fou
 	at kotlin.coroutines.ContinuationKt.startCoroutine(Continuation.kt:115)
 	at kotlin.coroutines.jvm.internal.RunSuspendKt.runSuspend(RunSuspend.kt:19)
 	at com.varabyte.kobweb.server.ApplicationKt.main(Application.kt)
-2026-07-11 01:27:34.525 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
-2026-07-11 01:27:34.528 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
-2026-07-11 01:27:34.667 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 17ms.
-2026-07-11 01:27:34.729 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
-2026-07-11 01:27:34.872 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
-2026-07-11 01:27:34.891 [main] INFO  io.ktor.server.Application - Application started in 0.839 seconds.
-2026-07-11 01:27:35.269 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
-2026-07-11 01:28:48.042 [eventLoopGroupProxy-4-1] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
-2026-07-11 01:29:02.392 [eventLoopGroupProxy-4-4] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
-2026-07-11 01:29:22.376 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
-2026-07-11 01:29:44.961 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
-2026-07-11 01:30:03.818 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
-2026-07-11 01:30:27.949 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
-2026-07-11 01:30:58.073 [eventLoopGroupProxy-4-19] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
-2026-07-11 01:31:25.022 [DefaultDispatcher-worker-5] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
-2026-07-11 01:31:57.236 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
-2026-07-11 01:31:58.373 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
+2026-07-11 01:47:12.335 [main] INFO  io.ktor.server.Application - Initializing server engine for Kobweb project "EasyPeayEnglish"
+2026-07-11 01:47:12.338 [main] INFO  io.ktor.server.Application - API jar found and will be loaded: "build\libs\easypeayenglish.jar"
+2026-07-11 01:47:12.459 [main] INFO  io.ktor.server.Application - Loaded and initialized server API jar in 17ms.
+2026-07-11 01:47:12.521 [main] INFO  io.ktor.server.Application - Initializing Kobweb streams.
+2026-07-11 01:47:12.632 [main] INFO  io.ktor.server.Application - CORS: Registered host(s): epeacademy.onrender.com
+2026-07-11 01:47:12.648 [main] INFO  io.ktor.server.Application - Application started in 0.671 seconds.
+2026-07-11 01:47:12.955 [main] INFO  io.ktor.server.Application - Responding at http://127.0.0.1:8080
+2026-07-11 01:48:31.506 [DefaultDispatcher-worker-3] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/createpost"
+2026-07-11 01:48:33.103 [eventLoopGroupProxy-4-4] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/"
+2026-07-11 01:48:34.167 [eventLoopGroupProxy-4-7] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/login"
+2026-07-11 01:48:35.146 [eventLoopGroupProxy-4-10] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/myposts"
+2026-07-11 01:48:36.194 [eventLoopGroupProxy-4-13] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/admin/success"
+2026-07-11 01:48:37.342 [eventLoopGroupProxy-4-16] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/"
+2026-07-11 01:48:38.603 [eventLoopGroupProxy-4-19] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/posts/post"
+2026-07-11 01:48:40.169 [eventLoopGroupProxy-4-2] DEBUG io.ktor.server.Application - Served fallback index.html file in response to "/search/query"
+2026-07-11 01:48:44.132 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Kobweb server shutting down...
+2026-07-11 01:48:45.257 [kotlinx.coroutines.DefaultExecutor] INFO  io.ktor.server.Application - Server finished shutting down.
