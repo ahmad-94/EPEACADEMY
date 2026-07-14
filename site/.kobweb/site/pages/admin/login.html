@@ -6,6 +6,7 @@
   <meta content="The best place to learn English easily. Join our academy today!" name="description">
   <link href="/favicon.ico" rel="icon">
   <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>Easy Peasy English- EPE Academy</title>
   <link href="/icons/epe_academy.png" rel="icon" sizes="32x32" type="image/png">
   <meta content="C0pwLwSDSHG4xXGraUB0j2t8OnsdY1QezmLxepjkz8w" name="google-site-verification">
   <meta content="5B4A3C847AF29EAA787850541A5D3BEC" name="msvalidate.01">
@@ -36,6 +37,50 @@
      </div>
     </div>
    </div>
+  </div><!-- Encoded spinner character is a cobweb -->
+  <div id="status">
+   <span id="warning">❌</span><span id="spinner">🕸️</span> <span id="text"></span>
+   <style>
+        @keyframes kobweb-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(359deg); }
+        }
+        body > #status {
+            position: fixed;
+            font-size: 24px;
+            color: black;
+            background-color: whitesmoke;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            border: 1px solid;
+            border-radius: 10px;
+            visibility: hidden;
+            opacity: 0;
+            z-index: 2147483647;
+            user-select: none;
+        }
+        body > #status > .hidden {
+           display: none;
+        }
+        body > #status > .visible {
+            display: inline-block;
+        }
+        body > #status.fade-in {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 1s;
+        }
+        body > #status.fade-out {
+           visibility: hidden;
+           opacity: 0;
+           transition: visibility 0s 1s, opacity 1s;
+        }
+        body > #status > #spinner {
+            animation: kobweb-spin 1.5s linear infinite;
+        }
+    </style>
   </div>
   <script src="/easypeayenglish.js"></script>
  </body>
