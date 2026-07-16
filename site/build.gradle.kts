@@ -2,6 +2,7 @@ import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.script
+import kotlinx.html.unsafe
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -19,6 +20,9 @@ kobweb {
         index {
             description.set("The best place to learn English easily. Join our academy today!")
             head.add {
+                unsafe {
+                    raw("<title>Easy Peasy English- EPE Academy</title>")
+                }
                 link {
                     rel = "icon"
                     type = "image/png"

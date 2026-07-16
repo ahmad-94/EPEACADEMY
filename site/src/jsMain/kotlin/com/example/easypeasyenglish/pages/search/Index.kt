@@ -13,16 +13,15 @@ import com.example.easypeasyenglish.components.LoadingIndicator
 import com.example.easypeasyenglish.components.OverflowSidePanel
 import com.example.easypeasyenglish.components.ShowLoadingMessage
 import com.example.easypeasyenglish.models.ApiListResponse
-import com.example.easypeasyenglish.models.ApiResponse
 import com.example.easypeasyenglish.models.Category
 import com.example.easypeasyenglish.models.Params.CAT_PARAM
 import com.example.easypeasyenglish.models.Params.POSTS_PER_PAGE
 import com.example.easypeasyenglish.models.Params.QUERY_PARAM
 import com.example.easypeasyenglish.models.PostWithoutDetails
+import com.example.easypeasyenglish.navigation.Screen
 import com.example.easypeasyenglish.sections.FooterSection
 import com.example.easypeasyenglish.sections.HeaderSection
 import com.example.easypeasyenglish.sections.LatestPostsSection
-import com.example.easypeasyenglish.utils.fetchPopularPosts
 import com.example.easypeasyenglish.utils.searchPostsByCategory
 import com.example.easypeasyenglish.utils.searchPostsByTitle
 import com.varabyte.kobweb.compose.css.TextAlign
@@ -30,6 +29,7 @@ import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.margin
@@ -39,7 +39,6 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.framework.annotations.DelicateApi
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.px
 
@@ -123,7 +122,7 @@ fun SearchPage() {
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -209,7 +208,9 @@ fun SearchPage() {
                         }
                     }
                 },
-                onClick = {}
+                onClick = {
+                    context.router.navigateTo(Screen.PostPage.getPost(id = it))
+                }
 
             )
         } else {

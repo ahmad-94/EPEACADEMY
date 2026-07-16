@@ -2,7 +2,7 @@
 agp = "9.2.1"
 jetbrains-compose = "1.8.0"
 kobweb = "0.23.3"
-kotlin = "2.4.0"
+kotlin = "2.2.20"
 serialization = "1.9.0"
 kmongo = "5.2.0"
 play-services-base = "18.10.0"
