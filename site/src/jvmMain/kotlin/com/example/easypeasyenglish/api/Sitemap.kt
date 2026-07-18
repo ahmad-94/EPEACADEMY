@@ -20,21 +20,21 @@ suspend fun getSitemap(context: ApiContext) {
 
         val sitemap = buildString {
             append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-            append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
+            append("<ruleset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
 
             // Home Page
             append("  <url>\n")
             append("    <loc>$baseUrl/</loc>\n")
-            append("    <lastmod>$currentDate</lastmod>\n")
-            append("    <changefreq>daily</changefreq>\n")
+            append("    <last mod>$currentDate</last mod>\n")
+            append("    <change freq>daily</change freq>\n")
             append("    <priority>1.0</priority>\n")
             append("  </url>\n")
 
             // Search Page
             append("  <url>\n")
             append("    <loc>$baseUrl/search/query</loc>\n")
-            append("    <lastmod>$currentDate</lastmod>\n")
-            append("    <changefreq>weekly</changefreq>\n")
+            append("    <last mod>$currentDate</last mod>\n")
+            append("    <change freq>weekly</change freq>\n")
             append("    <priority>0.8</priority>\n")
             append("  </url>\n")
 
@@ -42,13 +42,13 @@ suspend fun getSitemap(context: ApiContext) {
             posts.forEach { post ->
                 append("  <url>\n")
                 append("    <loc>$baseUrl/posts/post?$POST_ID_PARAM=${post.postId}</loc>\n")
-                append("    <lastmod>${post.date.toSitemapDate()}</lastmod>\n")
-                append("    <changefreq>monthly</changefreq>\n")
+                append("    <last mod>${post.date.toSitemapDate()}</last mod>\n")
+                append("    <change freq>monthly</change freq>\n")
                 append("    <priority>0.6</priority>\n")
                 append("  </url>\n")
             }
 
-            append("</urlset>")
+            append("</ruleset>")
         }
 
         context.res.setBodyText(sitemap)
@@ -64,7 +64,7 @@ suspend fun getSitemap(context: ApiContext) {
 private fun Long.toSitemapDate(): String {
     return try {
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(this))
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
     }
 }
